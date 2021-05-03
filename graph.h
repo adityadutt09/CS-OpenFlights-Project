@@ -8,27 +8,59 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <list>
+#include <cmath>
+#include <fstream>
+#include <sstream>
 
 class Graph{
     public:
+        //Constructor
+        Graph();
+
         void readFromFile();
 
         void insertVertex(Node  & n);
 
         //void insertEdge(Node a, Node b, double weight);
 
-        void removeVertex(Node n);
+        //void removeVertex(Node n);
 
         //void removeEdge(Node a, Node b);
 
-        void incidentEdges(Node n);
+        //void incidentEdges(Node n);
 
-        void areAdjacent(Node a, Node b);
+        bool areAdjacent(Node a, Node b);
 
         Node getVertex();
 
         Node getEdge();
+
+        void calcWeights();
+
+        void BFS(string start, string end);
     
+    /*class BFS{
+        public:
+  
+            BFS(const Node & n);
+  
+            BFS::Iterator begin();
+            BFS::Iterator end();
+            BFS::Iterator operator++();
+  
+            void add();
+            Node pop();
+            void peek() const;
+            bool empty() const;
+  
+        private:
+            std::queue<Node> queue;
+    
+    };
+    */
+
     private:
 
         struct Node{
@@ -39,13 +71,24 @@ class Graph{
 
         };
 
-        //Number of vertices
+        struct Edge{
+            string prev;
+            string dest;
+        };
+
+        //Storing the vertices
         std::vector<Node> vertices;
 
-        //Set of weights for each edge
-        std::vector<vector<double>> weights;
+        //Storing the edges
+        //std::vector<Edge> edges;
+
+        /** Storing edges and their weights using an adjacency list
+         * Key - Current city location
+         * Mapped to - Destination city and distance from current city
+        */
+        unordered_map< string, list< pair<string, double> > > adj;
 
         //Helper function to calculate weights as distance of separation
-        void calcWeights();
-
-}
+        double _calcWeights(double lat1, double lon1, double lat2, double lon2)
+        
+};
