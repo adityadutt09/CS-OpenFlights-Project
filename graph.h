@@ -19,27 +19,32 @@ class Graph{
         //Constructor
         Graph();
 
+class Graph{
+    public:
+
         void readFromFile();
 
         void insertVertex(Node  & n);
 
         //void insertEdge(Node a, Node b, double weight);
 
-        //void removeVertex(Node n);
+        void removeVertex(Node n);
 
         //void removeEdge(Node a, Node b);
 
-        //void incidentEdges(Node n);
+        void incidentEdges(Node n);
 
-        bool areAdjacent(Node a, Node b);
+        void areAdjacent(Node a, Node b);
 
         Node getVertex();
 
         Node getEdge();
 
         void calcWeights();
-
+        
         void BFS(string start, string end);
+
+        void printBFS(std::vector<string> const &  route, string start, string end);
     
     /*class BFS{
         public:
@@ -88,7 +93,12 @@ class Graph{
         */
         unordered_map< string, list< pair<string, double> > > adj;
 
+        //Number of vertices
+        std::vector<Node> vertices;
+
+        //Set of weights for each edge
+        std::vector<double> weights;
+
         //Helper function to calculate weights as distance of separation
         double _calcWeights(double lat1, double lon1, double lat2, double lon2)
-        
 };
