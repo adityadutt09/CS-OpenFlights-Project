@@ -7,30 +7,49 @@
 #include <list>
 #include <queue>
 #include "../cs225/PNG.h"
-#include "../Point.h"
-#include "ImageTraversal.h"
+
 using namespace cs225;
+
 /**
- * A breadth-first ImageTraversal.
- * Derived from base class ImageTraversal
- */
-class BFS : public ImageTraversal {
-public:
-  BFS(const PNG & png, const Point & start, double tolerance);
+ * A breadth-first search of our Graph 
+*/
+
+class BFS{
+  public:
+  
+  BFS();
   
   ImageTraversal::Iterator begin();
   ImageTraversal::Iterator end();
   
-  void add(const Point & point);
-  Point pop();
-  Point peek() const;
+  void add();
+  Node pop();
+  void peek() const;
   bool empty() const;
   
-private:
-  /** @todo [Part 1] */
-  /** add private members here*/
-  std::queue<Point> stack_;
-  Point startPoint_;
-  PNG image_;
-  double tolerance_;
+  private:
+    std::queue<Node> queue;
+    
 };
+
+
+/** Pseudo code
+ * BFSTraversal(start_node):
+ * visited := a set to store references to all visited nodes
+
+  queue := a queue to store references to nodes we should visit later
+  queue.enqueue(start_node)
+  visited.add(start_node)
+
+  while queue is not empty:
+    current_node := queue.dequeue()
+
+    process current_node
+    # for example, print(current_node.value)
+
+    for neighbor in current_node.neighbors:
+      if neighbor is not in visited:
+        queue.enqueue(neighbor)
+        visited.add(neighbor)
+
+*/

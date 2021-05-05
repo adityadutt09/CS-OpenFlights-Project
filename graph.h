@@ -8,9 +8,20 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <list>
+#include <cmath>
+#include <fstream>
+#include <sstream>
 
 class Graph{
     public:
+        //Constructor
+        Graph();
+
+class Graph{
+    public:
+
         void readFromFile();
 
         void insertVertex(Node  & n);
@@ -30,7 +41,31 @@ class Graph{
         Node getEdge();
 
         void calcWeights();
+        
+        void BFS(string start, string end);
+
+        void printBFS(std::vector<string> const &  route, string start, string end);
     
+    /*class BFS{
+        public:
+  
+            BFS(const Node & n);
+  
+            BFS::Iterator begin();
+            BFS::Iterator end();
+            BFS::Iterator operator++();
+  
+            void add();
+            Node pop();
+            void peek() const;
+            bool empty() const;
+  
+        private:
+            std::queue<Node> queue;
+    
+    };
+    */
+
     private:
 
         struct Node{
@@ -41,6 +76,23 @@ class Graph{
 
         };
 
+        struct Edge{
+            string prev;
+            string dest;
+        };
+
+        //Storing the vertices
+        std::vector<Node> vertices;
+
+        //Storing the edges
+        //std::vector<Edge> edges;
+
+        /** Storing edges and their weights using an adjacency list
+         * Key - Current city location
+         * Mapped to - Destination city and distance from current city
+        */
+        unordered_map< string, list< pair<string, double> > > adj;
+
         //Number of vertices
         std::vector<Node> vertices;
 
@@ -49,6 +101,4 @@ class Graph{
 
         //Helper function to calculate weights as distance of separation
         double _calcWeights(double lat1, double lon1, double lat2, double lon2)
-        
-
-}
+};
