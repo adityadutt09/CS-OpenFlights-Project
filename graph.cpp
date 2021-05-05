@@ -1,26 +1,31 @@
 #include "graph.h"
+#include <queue>
 
-Graph::Graph(){
+using namespace std;
+
+
+Graph::Graph(int x){
     
-    //Reads data from the csv file and creates the set of vertices
-    readFromFile();
+    if(x == 1){
+        //Reads data from the csv file and creates the set of vertices
+        readFromFile();
+    }
+}
 
+void Graph::buildAdj(){
+    
     /* Runs in O(n^2) */
     //Create a set of edges with their weights from the vertices
     for(unsigned i = 0; i < vertices.size(); i++){
         for(auto it = vertices.begin(); it != vertices.end(); it++){
             
             //Check if the nodes are the same
-            if(vertices[i] == (*it)){
+            if(vertices[i].city == (*it).city)
                 continue;
             
             else{
-                //Edge temp;
-                //Store the airport names instead of city names
-                //temp.prev = vertices[i].name;
-                //temp.dest = (*it).name;
-
-                double dist = calcWeight(vertices[i], (*it));
+                
+                double dist = calcWeights(vertices[i], (*it));
                 
                 //Create the adjacency list
                 adj[vertices[i].name].push_back(make_pair((*it).name, dist));
@@ -29,16 +34,15 @@ Graph::Graph(){
             }
         }
     }
-
 }
 
-Graph::readFromFile(){
+void Graph::readFromFile(){
 
     ifstream fin;
     fin.open("airports.dat", ios::in);
 
     std::vector<string> row;
-    string line, data, temp;
+    string line, word, temp;
 
     //std::vector<Nodes> nodes;
         
@@ -105,9 +109,9 @@ double Graph::_calcWeights(double lat1, double lon1, double lat2, double lon2){
 
 
 //Constructor for the BFS Traversal
-Graph::BFS::BFS(string start, string end){
+void Graph::BFS(const std::string & start, const std::string & end){
     
-    unoredered_map<string , bool> visited;
+    unordered_map<string , bool> visited;
     for(auto node : vertices){
         visited[node.name] = false;
     }
@@ -119,8 +123,8 @@ Graph::BFS::BFS(string start, string end){
     std::vector<string> route;
 
     while(!store.empty()){
-        string temp = queue.front();
-        store.pop_front();
+        string temp = store.front();
+        store.pop();
 
         //Process the node;
         route.push_back(temp);
@@ -129,17 +133,17 @@ Graph::BFS::BFS(string start, string end){
         
         for(auto it  = adj[temp].begin(); it != adj[temp].end(); it++){
             if(visited[it->first] != true){
-                queue.push(it->first);
+                store.push(it->first);
                 visited[it->first] = true;
             }
         }
     }
 
-    printBFS(route, start, end);
+    printBFS(route);
 
 }
 
-void Graph::printBFS(std::vector<string> const & route, const string & start, const string & end){
+void Graph::printBFS(std::vector<std::string> const & route){
 
     //if( route.back() != end )
     for(auto path : route){
@@ -153,41 +157,3 @@ void Graph::printBFS(std::vector<string> const & route, const string & start, co
     std::cout<<std::endl;
 
 }
-
-
-/** Pseudo code
- * BFSTraversal(start_node):
- * visited := a set to store references to all visited nodes
-
-  queue := a queue to store references to nodes we should visit later
-  queue.enqueue(start_node)
-  visited.add(start_node)
-
-  while queue is not empty:
-    current_node := queue.dequeue()
-
-    process current_node
-    # for example, print(current_node.value)
-
-    for neighbor in current_node.neighbors:
-      if neighbor is not in visited:
-        queue.enqueue(neighbor)
-        visited.add(neighbor)
-
-*/
-
-/*void Graph::removeVertex(Node n){
-    for(unsigned i = 0; i < vertices.size(); i++){
-        if(vertices[i].city == n.city){
-            Node temp;
-            temp.city = vertices[i].city;
-            temp.name = vertices[i].name;
-            temp.latitude = vertices[i].latitude;
-            temp.longitude = vertices[i].longitude;
-            vertices
-            removeWeights(temp);
-
-        }
-    }
-}
-*/

@@ -14,13 +14,21 @@
 #include <fstream>
 #include <sstream>
 
-class Graph{
-    public:
-        //Constructor
-        Graph();
+
+struct Node{
+    std::string city;
+    std::string name;
+    double latitude;
+    double longitude;
+
+};
 
 class Graph{
     public:
+        //Constructor
+        Graph(int x);
+
+        void buildAdj();
 
         void readFromFile();
 
@@ -40,65 +48,28 @@ class Graph{
 
         Node getEdge();
 
-        void calcWeights();
+        double calcWeights(Node & prev, Node & next);
         
-        void BFS(string start, string end);
+        void BFS(const std::string & start, const std::string & end);
 
-        void printBFS(std::vector<string> const &  route, string start, string end);
-    
-    /*class BFS{
-        public:
-  
-            BFS(const Node & n);
-  
-            BFS::Iterator begin();
-            BFS::Iterator end();
-            BFS::Iterator operator++();
-  
-            void add();
-            Node pop();
-            void peek() const;
-            bool empty() const;
-  
-        private:
-            std::queue<Node> queue;
-    
-    };
-    */
+        void printBFS(std::vector<std::string> const &  route);
 
     private:
 
-        struct Node{
-            string city;
-            string name;
-            double latitude;
-            double longitude;
-
-        };
-
         struct Edge{
-            string prev;
-            string dest;
+            std::string prev;
+            std::string dest;
         };
 
         //Storing the vertices
         std::vector<Node> vertices;
 
-        //Storing the edges
-        //std::vector<Edge> edges;
-
         /** Storing edges and their weights using an adjacency list
          * Key - Current city location
          * Mapped to - Destination city and distance from current city
         */
-        unordered_map< string, list< pair<string, double> > > adj;
-
-        //Number of vertices
-        std::vector<Node> vertices;
-
-        //Set of weights for each edge
-        std::vector<double> weights;
+        std::unordered_map< std::string, std::list< std::pair<std::string, double> >> adj;
 
         //Helper function to calculate weights as distance of separation
-        double _calcWeights(double lat1, double lon1, double lat2, double lon2)
+        double _calcWeights(double lat1, double lon1, double lat2, double lon2);
 };
