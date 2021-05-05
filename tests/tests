@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <cerrno>
+#include <cstdlib>
+#include <stdlib.h>
+#include "../directedGraph.hpp"
+#include "../catch/catch.hpp"
+using namespace std;
+Graph* getTestGraph() {
+    unordered_map< string, pair<double, double> > airport_coords;
+    airport_coords["ORD"] = make_pair(41.979, -87.905);
+    airport_coords["ATL"] = make_pair(33.6, -84.428);
+    airport_coords["UTI"] = make_pair(60.896, 26.938);
+    airport_coords["CDG"] = make_pair(49.01, 2.55);
+    airport_coords["PEK"] = make_pair(40.08, 116.58);
+    vector<Edge> edges = {};
+    edges.push_back(Edge{"ORD", "ATL"});
+    edges.push_back(Edge{"UTI", "CDG"});
+    edges.push_back(Edge{"ATL", "PEK"});
+    edges.push_back(Edge{"PEK", "UTI"});
+    Graph* graph (edges, airport_coords) ;
+  return graph;
+}
+
+
+// TEST_CASE("BFS", "[weight=2][part=1]") {
+//   Graph g = getTestGraph(); 
+//   vector<string> bfs;
+//   bfs = g.BFS("ORD", "ATL");
+//   REQUIRE( bfs.begin()).compare("ORD") == 0);
+// }
+TEST_CASE("BFS size", "[weight=2][part=1]") {
+  Graph* g = getTestGraph(); 
+  vector<string> bfs;
+  bfs = g.BFS("ORD", "ATL");
+  REQUIRE( bfs.size() == 2);
+}
+TEST_CASE("Djikstra size", "[weight=2][part=1]") {
+  Graph g = getTestGraph(); 
+  vector<string> d;
+  d = g.dijkstra("ORD", "ATL");
+  REQUIRE(d.size() == 2);
+}
+// TEST_CASE("Djikstra begin", "[weight=2][part=1]") {
+//   Graph g = getTestGraph(); 
+//   vector<string> l;
+//   l = g.dijkstra("ORD", "ATL");
+//   REQUIRE(l.begin().compare("ORD") == 0);
+// }
+TEST_CASE("Landmark begin", "[weight=2][part=1]") {
+  Graph g = getTestGraph(); 
+  vector<string> l;
+  l = g.landmarkPath("ATL", "PEK", "UTI");
+  REQUIRE(l.size() == 3);
+}
+
