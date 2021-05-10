@@ -50,9 +50,15 @@ class Graph{
 
         double calcWeights(Node & prev, Node & next);
         
-        void BFS(std::string start, std::string end);
+        void BFS(std::string start, std::string  end);
 
-        void printBFS(std::vector<std::string> const & route);
+        void printBFS(std::vector<std::string> const &  route);
+       
+        std::string minDistance(std::unordered_map< std::string, double > dist, std::unordered_map< std::string, bool > sptSet);
+        
+        std::vector<std::string> dijkstra(std::string src, std::string dest);
+        
+        void printDijkstra(std::string src, std::string dest);
 
     private:
 
@@ -68,7 +74,7 @@ class Graph{
          * Key - Current city location
          * Mapped to - Destination city and distance from current city
         */
-        std::unordered_map< std::string, std::list< std::pair<std::string, double> > > adj;
+        std::unordered_map< std::string, std::list< std::pair<std::string, double> >> adj;
 
         //Helper function to calculate weights as distance of separation
         double _calcWeights(double lat1, double lon1, double lat2, double lon2);

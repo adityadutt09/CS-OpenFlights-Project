@@ -20,25 +20,20 @@ void Graph::buildAdj(){
         for(auto it = vertices.begin(); it != vertices.end(); it++){
             
             //Check if the nodes are the same
-            if(vertices[i].name == (*it).name)
+            if(vertices[i].city == (*it).city)
                 continue;
             
             else{
-
+                
                 double dist = calcWeights(vertices[i], (*it));
                 
                 //Create the adjacency list
                 adj[vertices[i].name].push_back(make_pair((*it).name, dist));
-                adj[vertices[i].name].unique();
+            
+                //adj[vertices[i].city].unique();
             }
         }
     }
-
-    //std::cout<<vertices.size()<<std::endl;
-    //std::cout<<adj.size();
-    std::cout<<adj[vertices[80].name].back().first;
-
-
 }
 
 void Graph::readFromFile(){
@@ -50,10 +45,8 @@ void Graph::readFromFile(){
     string line, word, temp;
 
     //std::vector<Nodes> nodes;
-    
-    int ctr = 1000;
-
-    while(fin>>temp && ctr >= 0){
+        
+    while(fin>>temp){
         //Read the 3rd, 4th, 7th, 8th values from each line. 
         row.clear();
 
@@ -70,13 +63,13 @@ void Graph::readFromFile(){
         temp.name = row[3];
         temp.latitude = stoi(row[6]);
         temp.longitude = stoi(row[7]);
-    
+
+        //nodes.push_back(temp);
+
         //Call insertvertex
         insertVertex(temp);
-        ctr--;
         
     }
-    
 
     fin.close();
 
@@ -85,7 +78,8 @@ void Graph::readFromFile(){
 void Graph::insertVertex(Node & n){
     //Check if similar
     for(unsigned i = 0; i < vertices.size(); i++){
-        if( vertices[i].name == n.name ){
+        if( vertices[i].city == n.city ){
+            std::cout<<"Vertex already exists";
             return;
         }
     }
@@ -115,7 +109,7 @@ double Graph::_calcWeights(double lat1, double lon1, double lat2, double lon2){
 
 
 //Constructor for the BFS Traversal
-void Graph::BFS(std::string start, std::string end){
+void Graph::BFS(const std::string & start, const std::string & end){
     
     unordered_map<string , bool> visited;
     for(auto node : vertices){
@@ -151,6 +145,7 @@ void Graph::BFS(std::string start, std::string end){
 
 void Graph::printBFS(std::vector<std::string> const & route){
 
+    //if( route.back() != end )
     for(auto path : route){
         if( path == route.back()){
             std::cout<<path;
@@ -161,4 +156,105 @@ void Graph::printBFS(std::vector<std::string> const & route){
     }    
     std::cout<<std::endl;
 
+}
+string Graph::minDistance(unordered_map< string, double > dist, unordered_map< string, bool > sptSet) 
+{ 
+  // Initialize min value 
+  double min = DBL_MAX;
+  string min_index; 
+  
+  for (auto node : nodes){
+    if (sptSet[node] == false && dist[node] <= min){
+      min = dist[node];
+      min_index = node;
+    }
+  } 
+  
+  return min_index; 
+}
+
+vector<string> dijkstra(string src, string dest);
+{ 
+  // The output array.  dist[i] will hold the shortest 
+  // distance from src to i 
+  unordered_map< string, double > dist;
+  
+  // sptSet[i] will be true if vertex i is included in shortest 
+  // path tree or shortest distance from src to i is finalized
+  unordered_map< string, bool > sptSet;
+  
+  unordered_map<string, string> prev;
+  
+  vector<string> path;
+  
+  // Initialize all distances as INFINITE and stpSet[] as false 
+  for (auto node : nodes){
+    sptSet[node] = false;
+    dist[node] = DBL_MAX;
+    prev[node] = "";
+  } 
+  
+  // Distance of source vertex from itself is always 0 
+  dist[src] = 0.0; 
+  
+  for (auto node : nodes) { 
+    // Pick the minimum distance vertex from the set of vertices not 
+    // yet processed. u is always equal to src in the first iteration. 
+    string u = minDistance(dist, sptSet);
+    
+    // Make the picked vertex as visited
+    sptSet[u] = true; 
+    
+    bool dist_updated = false;
+    // Update dist value of the adjacent vertices of the picked vertex. 
+    for (auto it = adjList[u].begin(); it != adjList[u].end(); ++it)
+    { 
+      string neighbor = it->first;
+      double cost = it->second;
+      if (!sptSet[neighbor] && dist[u] + cost < dist[neighbor]) 
+      { 
+        dist[neighbor] = dist[u] + cost;
+        dist_updated = true;
+        prev[neighbor] = u;
+      } 
+    }
+    
+  }
+  
+  // create the path from the map of previous neighbors
+  vector<string> p;
+  p.push_back(dest);
+  string curr = dest;
+  unsigned count = 0;
+  while (curr.compare(src) != 0) {
+    if (count == nodes.size()){
+      break;
+    }
+    
+    curr = prev[curr];
+    p.push_back(curr);
+    count++;
+  }
+  
+  reverse(p.begin(), p.end());
+  return p;
+} 
+
+void Graph::printDijkstra(string src, string dest){
+  vector<string> runDijkstra = dijkstra(src, dest);
+  
+  if (runDijkstra.back() != dest){
+    cout << "Cannot reach your destination from here." << endl;
+    return;
+  }
+  
+  cout << "According to Dijkstra's Algorithm, this is the shortest path you can take from your source to your destination." << endl;
+  for (auto airport: runDijkstra) {
+    if (airport == runDijkstra.back()){
+      cout << airport;
+      break;
+    }
+    cout << airport << "->";
+  }
+  cout << endl;
 }

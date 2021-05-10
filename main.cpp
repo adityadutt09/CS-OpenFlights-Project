@@ -25,7 +25,7 @@ int main(){
 
     g.BFS(start,end);
 
-
+    g.printDijkstra(start,end);
 
     
 }
