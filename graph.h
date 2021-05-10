@@ -53,6 +53,12 @@ class Graph{
         void BFS(const std::string & start, const std::string & end);
 
         void printBFS(std::vector<std::string> const &  route);
+       
+        string minDistance(unordered_map< string, double > dist, unordered_map< string, bool > sptSet);
+        
+        vector<string> dijkstra(string src, string dest);
+        
+        void printDijkstra(string src, string dest);
 
     private:
 
