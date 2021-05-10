@@ -20,20 +20,25 @@ void Graph::buildAdj(){
         for(auto it = vertices.begin(); it != vertices.end(); it++){
             
             //Check if the nodes are the same
-            if(vertices[i].city == (*it).city)
+            if(vertices[i].name == (*it).name)
                 continue;
             
             else{
-                
+
                 double dist = calcWeights(vertices[i], (*it));
                 
                 //Create the adjacency list
                 adj[vertices[i].name].push_back(make_pair((*it).name, dist));
-            
-                //adj[vertices[i].city].unique();
+                adj[vertices[i].name].unique();
             }
         }
     }
+
+    //std::cout<<vertices.size()<<std::endl;
+    //std::cout<<adj.size();
+    std::cout<<adj[vertices[80].name].back().first;
+
+
 }
 
 void Graph::readFromFile(){
@@ -45,8 +50,10 @@ void Graph::readFromFile(){
     string line, word, temp;
 
     //std::vector<Nodes> nodes;
-        
-    while(fin>>temp){
+    
+    int ctr = 1000;
+
+    while(fin>>temp && ctr >= 0){
         //Read the 3rd, 4th, 7th, 8th values from each line. 
         row.clear();
 
@@ -63,13 +70,13 @@ void Graph::readFromFile(){
         temp.name = row[3];
         temp.latitude = stoi(row[6]);
         temp.longitude = stoi(row[7]);
-
-        //nodes.push_back(temp);
-
+    
         //Call insertvertex
         insertVertex(temp);
+        ctr--;
         
     }
+    
 
     fin.close();
 
@@ -78,8 +85,7 @@ void Graph::readFromFile(){
 void Graph::insertVertex(Node & n){
     //Check if similar
     for(unsigned i = 0; i < vertices.size(); i++){
-        if( vertices[i].city == n.city ){
-            std::cout<<"Vertex already exists";
+        if( vertices[i].name == n.name ){
             return;
         }
     }
@@ -109,7 +115,7 @@ double Graph::_calcWeights(double lat1, double lon1, double lat2, double lon2){
 
 
 //Constructor for the BFS Traversal
-void Graph::BFS(const std::string & start, const std::string & end){
+void Graph::BFS(std::string start, std::string end){
     
     unordered_map<string , bool> visited;
     for(auto node : vertices){
@@ -145,7 +151,6 @@ void Graph::BFS(const std::string & start, const std::string & end){
 
 void Graph::printBFS(std::vector<std::string> const & route){
 
-    //if( route.back() != end )
     for(auto path : route){
         if( path == route.back()){
             std::cout<<path;
