@@ -258,3 +258,35 @@ void Graph::printDijkstra(string src, string dest){
   }
   cout << endl;
 }
+/*
+vector<string> Graph::landmarkPath(string srcAirport, string middleAirport, string dstAirport) {
+  vector<string> first_route = dijkstra(srcAirport, middleAirport);
+  vector<string> sec_route = dijkstra(middleAirport, dstAirport);
+  sec_route.erase(sec_route.begin());
+  
+  for(unsigned x = 0; x < sec_route.size(); x++) {
+    first_route.push_back(sec_route[x]);
+  }
+  
+  return first_route;
+}
+
+void Graph::printLandmarkPath(string src, string mid, string dest){
+  vector<string> runLP = landmarkPath(src, mid, dest);
+  
+  if (runLP.back() != dest){
+    cout << "Cannot reach your destination from here." << endl;
+    return;
+  }
+  
+  cout << "According to the Landmark Path Algorithm, this is the shortest path you can take from your source to your destination through your connecting airport." << endl;
+  for (auto airport: runLP) {
+    if (airport == runLP.back()){
+      cout << airport;
+      break;
+    }
+    cout << airport << "->";
+  }
+  cout << endl;
+}
+ */

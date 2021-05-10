@@ -59,6 +59,10 @@ class Graph{
         std::vector<std::string> dijkstra(std::string src, std::string dest);
         
         void printDijkstra(std::string src, std::string dest);
+        
+        //vector<string> landmarkPath(string srcAirport, string middleAirport, string dstAirport);
+        
+        //void printLandmarkPath(string src, string mid, string dest);
 
     private:
 
