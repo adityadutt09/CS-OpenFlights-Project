@@ -3,24 +3,24 @@
 
 using namespace std;
 
+void Graph::buildAdj( unordered_map< string, pair<double, double> > coords ){
 
-Graph::Graph(int x){
+    for(auto & e : edges){
+        double weight = _calcWeight(coords[e.prev].first, coords[e.prev].second, coords[e.dest].first, coords[e.dest].second);
+        adj[e.prev].push_back(make_pair(e.dest,weight));
+        adj[e.prev].unique();
     
-    if(x == 1){
-        //Reads data from the csv file and creates the set of vertices
-        readFromFile();
     }
-}
 
-void Graph::buildAdj(){
-    
-    /* Runs in O(n^2) */
+    cout<<"Adj List size : "<<adj.size()<<endl;
+
+    /* Runs in O(n^2) 
     //Create a set of edges with their weights from the vertices
     for(unsigned i = 0; i < vertices.size(); i++){
         for(auto it = vertices.begin(); it != vertices.end(); it++){
             
             //Check if the nodes are the same
-            if(vertices[i].city == (*it).city)
+            if(vertices[i].name == (*it).name)
                 continue;
             
             else{
@@ -29,14 +29,14 @@ void Graph::buildAdj(){
                 
                 //Create the adjacency list
                 adj[vertices[i].name].push_back(make_pair((*it).name, dist));
-            
-                //adj[vertices[i].city].unique();
+                adj[vertices[i].name].unique();
             }
         }
     }
+    */
 }
 
-void Graph::readFromFile(){
+/*void Graph::readCoordsfromFile(){
 
     ifstream fin;
     fin.open("airports.dat", ios::in);
@@ -44,8 +44,6 @@ void Graph::readFromFile(){
     std::vector<string> row;
     string line, word, temp;
 
-    //std::vector<Nodes> nodes;
-        
     while(fin>>temp){
         //Read the 3rd, 4th, 7th, 8th values from each line. 
         row.clear();
@@ -59,41 +57,108 @@ void Graph::readFromFile(){
         }
 
         Node temp;
-        temp.city = row[2];
-        temp.name = row[3];
+        temp.city = row[3];
+        temp.name = row[4];
         temp.latitude = stoi(row[6]);
         temp.longitude = stoi(row[7]);
-
-        //nodes.push_back(temp);
-
+        
         //Call insertvertex
         insertVertex(temp);
-        
+
+    }
+
+    //cout<<vertices.size();
+
+    fin.close();
+
+}
+*/
+
+/*void Graph::readEdgesfromFile(){
+    
+    ifstream fin;
+    fin.open("routes.dat", ios::in);
+
+    std::vector<string> row;
+    string line, word, temp;
+
+    while(fin>>temp){
+        //Read the 3rd, 5th values from each line
+        row.clear();
+
+        getline(fin, line);
+
+        std::stringstream s(line);
+
+        while(getline(s, word, ',')){
+            row.push_back(word);
+        }
+
+        Edge temp;
+        temp.prev = row[2];
+        temp.dest = row[4];
+
+        //Call insertEdge
+        edges.push_back(temp);
+
     }
 
     fin.close();
 
 }
+*/
+
+void Graph::_findCoords(vector<string> airports){
+    
+    unordered_map< string, pair<double, double> > coords;
+    for (unsigned i = 0; i < airports.size(); i++){
+        string after_airport = airports[i].substr(4, string::npos);
+
+        string key = airports[i].substr(0, 3);
+        string lat = airports[i].substr(4, after_airport.find(","));
+        string lon = after_airport.substr(after_airport.find(",") + 1, string::npos);
+
+        double latitude = atof(lat.c_str());
+        double longitude = atof(lon.c_str());
+
+        coords[key] = make_pair(latitude, longitude);
+    }
+
+    buildAdj(coords);
+}
+
+void Graph::insertEdges(vector<string> routes){
+   
+    for (unsigned i = 0; i < routes.size(); i++){
+		string prev = routes[i].substr(0, 3);
+		string dest = routes[i].substr(4, 3);
+		edges.push_back(Edge{prev, dest});
+	}
+}
 
 void Graph::insertVertex(Node & n){
     //Check if similar
     for(unsigned i = 0; i < vertices.size(); i++){
-        if( vertices[i].city == n.city ){
-            std::cout<<"Vertex already exists";
+        if( vertices[i].name == n.name ){
             return;
         }
     }
     vertices.push_back(n);
 }
 
-double Graph::calcWeights(Node & prev, Node & next){
+/*void Graph::calcWeights(){
 
-        double weight = _calcWeights(prev.latitude, prev.longitude, next.latitude, next.longitude);
-        return weight;
+    //unordered_map< string, pair<double, double> > coords;
+    //for(auto & v : vertices){
+      //  coords[v.name] = make_pair(v.latitude,v.longitude);
+    //}
 
-}
+    
 
-double Graph::_calcWeights(double lat1, double lon1, double lat2, double lon2){
+    //cout<<"Weight size :"<<weights.size()<<endl;
+}*/
+
+double Graph::_calcWeight(double lat1, double lon1, double lat2, double lon2){
     
     double dLat = (lat2 - lat1) * M_PI / 180.0;
     double dLon = (lon2 - lon1) * M_PI / 180.0;
@@ -102,42 +167,50 @@ double Graph::_calcWeights(double lat1, double lon1, double lat2, double lon2){
     lat2 = (lat2) * M_PI / 180.0;
     
     double a = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
-    double R = 6371.0;
-    double c = 2 * asin(sqrt(a));
-    return R * c;
+    //double R = 6371.0;
+    a = 2 * asin(sqrt(a));
+    return 6371.0 * a;
 }
 
 
 //Constructor for the BFS Traversal
-void Graph::BFS(const std::string & start, const std::string & end){
+void Graph::BFS(std::string start, std::string end){
     
     unordered_map<string , bool> visited;
+    //visited.reserve(vertices.size());
+    
     for(auto node : vertices){
         visited[node.name] = false;
     }
 
-    std::queue<string> store;
-    store.push(start);
+    //std::queue<string> store;
+    std::list<string> store;
+    store.push_back(start);
     visited[start] = true;
 
     std::vector<string> route;
 
     while(!store.empty()){
         string temp = store.front();
-        store.pop();
-
+        
         //Process the node;
         route.push_back(temp);
-        if(temp == end)
+        if(temp == end){
             break;
-        
+        }
+        store.pop_front();
+
+        cout<<adj[temp].size()<<endl;
+
         for(auto it  = adj[temp].begin(); it != adj[temp].end(); it++){
             if(visited[it->first] != true){
-                store.push(it->first);
+                store.push_back(it->first);
                 visited[it->first] = true;
             }
         }
     }
+
+    cout<<route.size()<<endl;
 
     printBFS(route);
 
@@ -146,18 +219,39 @@ void Graph::BFS(const std::string & start, const std::string & end){
 void Graph::printBFS(std::vector<std::string> const & route){
 
     //if( route.back() != end )
+
     for(auto path : route){
         if( path == route.back()){
-            std::cout<<path;
+            cout<<path;
             break;
         }
 
-        std::cout<<path<<" - > ";
+        cout<<path<<" - > ";
     }    
-    std::cout<<std::endl;
+    cout<<endl;
 
 }
-string Graph::minDistance(unordered_map< string, double > dist, unordered_map< string, bool > sptSet) 
+
+void Graph::printGraph(Graph const& graph){
+
+    for (auto & value : graph.adj) {
+        string vertex = value.first;
+        list< pair<string, double> > adjacentVertices = value.second;
+        list< pair<string, double> >::iterator itr = adjacentVertices.begin();
+         
+        cout << "adjacencyList[" << vertex << "]";
+          
+        while (itr != adjacentVertices.end()) {
+            cout << " -> " << (*itr).first << " (" << (*itr).second << ")";
+            ++itr;
+        }
+         
+        cout << endl;
+    }
+}
+
+
+/*string Graph::minDistance(unordered_map< string, double > dist, unordered_map< string, bool > sptSet) 
 { 
   // Initialize min value 
   double min = DBL_MAX;
@@ -258,3 +352,4 @@ void Graph::printDijkstra(string src, string dest){
   }
   cout << endl;
 }
+*/

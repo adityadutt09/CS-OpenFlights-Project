@@ -26,39 +26,33 @@ struct Node{
 class Graph{
     public:
         //Constructor
-        Graph(int x);
+        //Graph();
 
-        void buildAdj();
+        void buildAdj(std::unordered_map< std::string, std::pair<double, double> > coords);
 
-        void readFromFile();
+        //void readCoordsfromFile();
 
-        void insertVertex(Node  & n);
+        //void readEdgesfromFile();
 
-        //void insertEdge(Node a, Node b, double weight);
+        void _findCoords(std::vector<std::string> airports);
 
-        void removeVertex(Node n);
+        void insertVertex(Node & n);
 
-        //void removeEdge(Node a, Node b);
+        void insertEdges(std::vector<std::string> routes);
 
-        void incidentEdges(Node n);
-
-        void areAdjacent(Node a, Node b);
-
-        Node getVertex();
-
-        Node getEdge();
-
-        double calcWeights(Node & prev, Node & next);
+        //void calcWeights();
         
-        void BFS(std::string start, std::string  end);
+        void BFS(std::string start, std::string end);
 
         void printBFS(std::vector<std::string> const &  route);
+
+        void printGraph(Graph const& graph);
        
-        std::string minDistance(std::unordered_map< std::string, double > dist, std::unordered_map< std::string, bool > sptSet);
+        //std::string minDistance(std::unordered_map< std::string, double > dist, std::unordered_map< std::string, bool > sptSet);
         
-        std::vector<std::string> dijkstra(std::string src, std::string dest);
+        //std::vector<std::string> dijkstra(std::string src, std::string dest);
         
-        void printDijkstra(std::string src, std::string dest);
+        //void printDijkstra(std::string src, std::string dest);
 
     private:
 
@@ -70,6 +64,9 @@ class Graph{
         //Storing the vertices
         std::vector<Node> vertices;
 
+        //Storing the edges
+        std::vector<Edge> edges;
+
         /** Storing edges and their weights using an adjacency list
          * Key - Current city location
          * Mapped to - Destination city and distance from current city
@@ -77,5 +74,5 @@ class Graph{
         std::unordered_map< std::string, std::list< std::pair<std::string, double> >> adj;
 
         //Helper function to calculate weights as distance of separation
-        double _calcWeights(double lat1, double lon1, double lat2, double lon2);
+        double _calcWeight(double lat1, double lon1, double lat2, double lon2);
 };

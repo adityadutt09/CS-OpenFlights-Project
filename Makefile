@@ -1,5 +1,5 @@
 EXENAME = finalproj
-OBJS = main.o graph.o
+OBJS = Read_file.o main.o Write_file.o graph.o
 
 
 CXX = clang++
@@ -35,11 +35,17 @@ output_msg: ; $(CLANG_VERSION_MSG)
 $(EXENAME): output_msg $(OBJS)
 	$(LD) $(OBJS) $(LDFLAGS) -o $(EXENAME)
 
-Graph.0: main.cpp graph.cpp
+Read_file.o: main.cpp Read_file.cpp
+	$(CXX) $(CXXFLAGS) main.cpp Read_file.cpp
+
+Write_file.o: main.cpp Write_file.cpp
+	$(CXX) $(CXXFLAGS) main.cpp Write_file.cpp
+
+graph.0: main.cpp graph.cpp
 	$(CXX) $(CXXFLAGS) main.cpp graph.cpp
 
-test: catch/catchmain.cpp tests/tests.cpp 
-	$(LD) catch/catchmain.cpp tests/tests.cpp $(LDFLAGS) -o test
+test: catch/catchmain.cpp tests/tests.cpp Read_file.cpp
+	$(LD) catch/catchmain.cpp tests/tests.cpp Read_file.cpp $(LDFLAGS) -o test
 
 clean:
 	-rm -f *.o $(EXENAME) test
