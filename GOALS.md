@@ -11,10 +11,9 @@ The datasheet we have chosen comes from the OpenFlights Collection, from their c
 Graph Algorithms
 The three algorithms we plan on using are :
 
-The A* algorithm as part of the complex/uncovered option. The input would be the two nodes, or airports from the dataset, in which we want to find the fastest path between. The output would be a string containing the path that is the fastest between the two nodes. The big-O running time of a general A* algorithm is 
-O(b^d), where d is the depth of the solution and b is the branching factor (the average number of successors per state). This would be the target run time, as the run time varies with the A* algorithm. 
-
 The covered algorithm we want to make is the shortest-path algorithm: Djikstra’s algorithm.  The input to the algorithm is a starting node and a target node. The output will generally be a set of edges depicting the shortest path to each destination node. The big-O running time of Djikstra’s algorithm is in the worst case graph will be a complete graph i.e total edges = n(n-1)/2 where n is the number of vertices therefore in the worst case the run time will be O = nlog(n).
+
+The Landmark algorithm as part of the complex/uncovered option. This algorithm finds the fastest path between any two nodes. The input would be the two nodes, or airports from the dataset, in which we want to find the fastest path between. The output would be a string containing the path that is the fastest between the two nodes. The big-O running time of a general Landmark algorithm is about O(nlog(n)), same as Djikstra's. 
 
 The final algorithm we want to use is the BFS algorithm. The input would be a two nodes from the datasets, so two airports, and the output would be the fastest path between those two nodes. The BFS algorithm keeps track of booleans of each node and is aimed to only be checked once. The big-O running time of BFS is O(V + E) O(V + E) O(V+E), where V is a vertex/node and E is an edge. This would be the ideal running time since each node/edge would be checked once. 
 
