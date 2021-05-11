@@ -59,15 +59,29 @@ int main(){
     
     string start;
     string finish;
-    
-    cout<<"Enter starting airport (Use 3-Letter Airport code): ";
+    string connect;
+
+    cout<<"Enter starting airport (Use 3-Letter Airport Code): ";
     cin>>start;
 
-    cout<<"Enter final airport you wish to go to (Use 3-Letter Airport code): ";
+    cout<<"Enter final airport you wish to go to (Use 3-Letter Airport Code): ";
     cin>>finish;
 
-    g.BFS(start, finish);
+    cout<<"------------------------------------------------------------------------------------------------------------------"<<endl;
+
+    g.printBFS(start, finish);
     
-    //g.printDijkstra(start,finish);
-    
+    cout<<endl;
+
+    g.printDijkstra(start, finish);
+
+    cout<<endl;
+
+    cout<<"Enter a connecting airport you would like to visit in your journey (Use 3-Letter Airport Code) : ";
+    cin>>connect;
+
+    cout<<endl;
+
+    g.printLandmark(start, connect, finish);
+
 }

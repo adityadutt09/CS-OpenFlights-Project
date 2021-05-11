@@ -1,5 +1,5 @@
 #include "graph.h"
-#include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,116 +12,25 @@ void Graph::buildAdj( unordered_map< string, pair<double, double> > coords ){
     
     }
 
-    cout<<"Adj List size : "<<adj.size()<<endl;
-
-    /* Runs in O(n^2) 
-    //Create a set of edges with their weights from the vertices
-    for(unsigned i = 0; i < vertices.size(); i++){
-        for(auto it = vertices.begin(); it != vertices.end(); it++){
-            
-            //Check if the nodes are the same
-            if(vertices[i].name == (*it).name)
-                continue;
-            
-            else{
-                
-                double dist = calcWeights(vertices[i], (*it));
-                
-                //Create the adjacency list
-                adj[vertices[i].name].push_back(make_pair((*it).name, dist));
-                adj[vertices[i].name].unique();
-            }
-        }
-    }
-    */
+    //cout<<"Adj List size : "<<adj.size()<<endl;
 }
-
-/*void Graph::readCoordsfromFile(){
-
-    ifstream fin;
-    fin.open("airports.dat", ios::in);
-
-    std::vector<string> row;
-    string line, word, temp;
-
-    while(fin>>temp){
-        //Read the 3rd, 4th, 7th, 8th values from each line. 
-        row.clear();
-
-        getline(fin, line);
-
-        std::stringstream s(line);
-
-        while(getline(s, word, ',')){
-            row.push_back(word);
-        }
-
-        Node temp;
-        temp.city = row[3];
-        temp.name = row[4];
-        temp.latitude = stoi(row[6]);
-        temp.longitude = stoi(row[7]);
-        
-        //Call insertvertex
-        insertVertex(temp);
-
-    }
-
-    //cout<<vertices.size();
-
-    fin.close();
-
-}
-*/
-
-/*void Graph::readEdgesfromFile(){
-    
-    ifstream fin;
-    fin.open("routes.dat", ios::in);
-
-    std::vector<string> row;
-    string line, word, temp;
-
-    while(fin>>temp){
-        //Read the 3rd, 5th values from each line
-        row.clear();
-
-        getline(fin, line);
-
-        std::stringstream s(line);
-
-        while(getline(s, word, ',')){
-            row.push_back(word);
-        }
-
-        Edge temp;
-        temp.prev = row[2];
-        temp.dest = row[4];
-
-        //Call insertEdge
-        edges.push_back(temp);
-
-    }
-
-    fin.close();
-
-}
-*/
 
 void Graph::_findCoords(vector<string> airports){
     
     unordered_map< string, pair<double, double> > coords;
     for (unsigned i = 0; i < airports.size(); i++){
-        string after_airport = airports[i].substr(4, string::npos);
+        string location = airports[i].substr(4, string::npos);
 
-        string key = airports[i].substr(0, 3);
-        string lat = airports[i].substr(4, after_airport.find(","));
-        string lon = after_airport.substr(after_airport.find(",") + 1, string::npos);
+        Node temp;
+        temp.name = airports[i].substr(0, 3);
+        string latitude = airports[i].substr(4, location.find(","));
+        string longitude = location.substr(location.find(",") + 1, string::npos);
 
-        double latitude = atof(lat.c_str());
-        double longitude = atof(lon.c_str());
+        temp.latitude = atof(latitude.c_str());
+        temp.longitude = atof(longitude.c_str());
 
-        coords[key] = make_pair(latitude, longitude);
+        coords[temp.name] = make_pair(temp.latitude, temp.longitude);
+        insertVertex(temp);    
     }
 
     buildAdj(coords);
@@ -137,26 +46,8 @@ void Graph::insertEdges(vector<string> routes){
 }
 
 void Graph::insertVertex(Node & n){
-    //Check if similar
-    for(unsigned i = 0; i < vertices.size(); i++){
-        if( vertices[i].name == n.name ){
-            return;
-        }
-    }
     vertices.push_back(n);
 }
-
-/*void Graph::calcWeights(){
-
-    //unordered_map< string, pair<double, double> > coords;
-    //for(auto & v : vertices){
-      //  coords[v.name] = make_pair(v.latitude,v.longitude);
-    //}
-
-    
-
-    //cout<<"Weight size :"<<weights.size()<<endl;
-}*/
 
 double Graph::_calcWeight(double lat1, double lon1, double lat2, double lon2){
     
@@ -166,70 +57,11 @@ double Graph::_calcWeight(double lat1, double lon1, double lat2, double lon2){
     lat1 = (lat1) * M_PI / 180.0;
     lat2 = (lat2) * M_PI / 180.0;
     
-    double a = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
     //double R = 6371.0;
+    double a = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
     a = 2 * asin(sqrt(a));
+    
     return 6371.0 * a;
-}
-
-
-//Constructor for the BFS Traversal
-void Graph::BFS(std::string start, std::string end){
-    
-    unordered_map<string , bool> visited;
-    //visited.reserve(vertices.size());
-    
-    for(auto node : vertices){
-        visited[node.name] = false;
-    }
-
-    //std::queue<string> store;
-    std::list<string> store;
-    store.push_back(start);
-    visited[start] = true;
-
-    std::vector<string> route;
-
-    while(!store.empty()){
-        string temp = store.front();
-        
-        //Process the node;
-        route.push_back(temp);
-        if(temp == end){
-            break;
-        }
-        store.pop_front();
-
-        cout<<adj[temp].size()<<endl;
-
-        for(auto it  = adj[temp].begin(); it != adj[temp].end(); it++){
-            if(visited[it->first] != true){
-                store.push_back(it->first);
-                visited[it->first] = true;
-            }
-        }
-    }
-
-    cout<<route.size()<<endl;
-
-    printBFS(route);
-
-}
-
-void Graph::printBFS(std::vector<std::string> const & route){
-
-    //if( route.back() != end )
-
-    for(auto path : route){
-        if( path == route.back()){
-            cout<<path;
-            break;
-        }
-
-        cout<<path<<" - > ";
-    }    
-    cout<<endl;
-
 }
 
 void Graph::printGraph(Graph const& graph){
@@ -250,106 +82,219 @@ void Graph::printGraph(Graph const& graph){
     }
 }
 
+/** BFS Algorithm
+ * Implements the Traversal and print function
+ */
 
-/*string Graph::minDistance(unordered_map< string, double > dist, unordered_map< string, bool > sptSet) 
+vector<string> Graph::BFS(std::string start, std::string end){
+    
+    unordered_map<string , bool> visited;
+    
+    for(auto node : vertices){
+        visited[node.name] = false;
+    }
+
+    std::list<string> store;
+    store.push_back(start);
+    visited[start] = true;
+
+    std::vector<string> route;
+
+    //While the queue is not empty
+    while(!store.empty()){
+        string temp = store.front();
+        
+        //Process the node;
+        route.push_back(temp);
+        if(temp == end){
+            break;
+        }
+        store.pop_front();
+
+        for(auto it  = adj[temp].begin(); it != adj[temp].end(); it++){
+            if(visited[it->first] != true){
+                store.push_back(it->first);
+                visited[it->first] = true;
+            }
+        }
+    }
+
+    return route;
+
+}
+
+void Graph::printBFS(string start, string end){
+
+    std::vector<string> route = BFS(start,end);
+
+    if(route.back() != end){
+        cout<<"The traversal cannot be made from the given starting node to the given end node"<<endl;
+        return;
+    }
+
+    cout<<"Applying a BFS traversal on the graph, starting from and ending at the airports listed above :"<<endl;
+    for(auto path : route){
+        if( path == route.back()){
+            cout<<path;
+            break;
+        }
+
+        cout<<path<<" - > ";
+    }    
+    cout<<endl;
+}
+
+/** Dijkstra's Algorithm
+ * Implements Traversal and Print
+ * Uses the helper function minDistance
+ */ 
+
+string Graph::minimum(unordered_map< string, double > dist, unordered_map< string, bool > shortest) 
 { 
   // Initialize min value 
   double min = DBL_MAX;
   string min_index; 
   
-  for (auto node : nodes){
-    if (sptSet[node] == false && dist[node] <= min){
-      min = dist[node];
-      min_index = node;
+  for (auto & v : vertices){
+    if (shortest[v.name] == false && dist[v.name] <= min){
+      min = dist[v.name];
+      min_index = v.name;
     }
   } 
   
   return min_index; 
 }
 
-vector<string> dijkstra(string src, string dest);
-{ 
-  // The output array.  dist[i] will hold the shortest 
-  // distance from src to i 
-  unordered_map< string, double > dist;
+vector<string> Graph::Dijkstra(string start, string end){ 
+    //Each element will hold the shortest distance from start to the element index.
+    unordered_map< string, double > dist;
   
-  // sptSet[i] will be true if vertex i is included in shortest 
-  // path tree or shortest distance from src to i is finalized
-  unordered_map< string, bool > sptSet;
+    // shortest[i] will be true if vertex i is included in shortest 
+    // path tree or shortest distance from start to i is finalized
+    unordered_map< string, bool > shortest;
   
-  unordered_map<string, string> prev;
+    unordered_map<string, string> prev;
   
-  vector<string> path;
+    vector<string> path;
   
-  // Initialize all distances as INFINITE and stpSet[] as false 
-  for (auto node : nodes){
-    sptSet[node] = false;
-    dist[node] = DBL_MAX;
-    prev[node] = "";
-  } 
+    // Initialize all distances as infinity and shortest path set as false 
+    for (auto & v : vertices){
+        shortest[v.name] = false;
+        dist[v.name] = DBL_MAX;
+        prev[v.name] = "";
+    } 
   
-  // Distance of source vertex from itself is always 0 
-  dist[src] = 0.0; 
+    // Distance of starting node from itself is always 0 
+    dist[start] = 0.0; 
   
-  for (auto node : nodes) { 
-    // Pick the minimum distance vertex from the set of vertices not 
-    // yet processed. u is always equal to src in the first iteration. 
-    string u = minDistance(dist, sptSet);
+    for (auto v : vertices) { 
+
+        // Pick the vertex with the shortest distance from the set of vertices not 
+        // yet processed. min is always equal to start in the first iteration. 
+        string min = minimum(dist, shortest);
     
-    // Make the picked vertex as visited
-    sptSet[u] = true; 
+        // Make the picked vertex as visited
+        shortest[min] = true; 
     
-    bool dist_updated = false;
-    // Update dist value of the adjacent vertices of the picked vertex. 
-    for (auto it = adjList[u].begin(); it != adjList[u].end(); ++it)
-    { 
-      string neighbor = it->first;
-      double cost = it->second;
-      if (!sptSet[neighbor] && dist[u] + cost < dist[neighbor]) 
-      { 
-        dist[neighbor] = dist[u] + cost;
-        dist_updated = true;
-        prev[neighbor] = u;
-      } 
+        bool flag = false;
+    
+        // Update dist value of the adjacent vertices of the picked vertex. 
+        for (auto it = adj[min].begin(); it != adj[min].end(); it++){
+            string neighbor = it->first;
+            double cost = it->second;
+        
+            if (!shortest[neighbor] && dist[min] + cost < dist[neighbor]){
+                dist[neighbor] = dist[min] + cost;
+                flag = true;
+                prev[neighbor] = min;
+            } 
+        }
     }
-    
-  }
   
-  // create the path from the map of previous neighbors
-  vector<string> p;
-  p.push_back(dest);
-  string curr = dest;
-  unsigned count = 0;
-  while (curr.compare(src) != 0) {
-    if (count == nodes.size()){
-      break;
+    // create the path from the map of previous neighbors
+    vector<string> rev_path;
+    rev_path.push_back(end);
+    string temp = end;
+  
+    unsigned count = 0;
+  
+    //While the string is not the start point
+    while (temp.compare(start) != 0) {
+        if (count == vertices.size()){
+        break;
+        }
+    
+        temp = prev[temp];
+        rev_path.push_back(temp);
+        count++;
     }
-    
-    curr = prev[curr];
-    p.push_back(curr);
-    count++;
-  }
   
-  reverse(p.begin(), p.end());
-  return p;
+    reverse(rev_path.begin(), rev_path.end());
+  
+    //printDijkstra(rev_path);
+
+    return rev_path; 
+
 } 
 
-void Graph::printDijkstra(string src, string dest){
-  vector<string> runDijkstra = dijkstra(src, dest);
-  
-  if (runDijkstra.back() != dest){
-    cout << "Cannot reach your destination from here." << endl;
-    return;
-  }
-  
-  cout << "According to Dijkstra's Algorithm, this is the shortest path you can take from your source to your destination." << endl;
-  for (auto airport: runDijkstra) {
-    if (airport == runDijkstra.back()){
-      cout << airport;
-      break;
+void Graph::printDijkstra(string start, string end){
+    
+    vector<string> route = Dijkstra(start, end);  
+
+    if(route.back() != end){
+        cout<<"Your destination cannot be visited starting from the given point"<<endl;
+        return;
     }
-    cout << airport << "->";
-  }
-  cout << endl;
+
+    cout << "From Dijkstra's Algorithm, the shortest path you can take from your starting airport to your destination is :" << endl;
+    for (auto & airport: route) {
+        if (airport == route.back()){
+        cout << airport;
+        break;
+        }
+        cout << airport << "->";
+    }
+    cout << endl;
 }
-*/
+
+/** Landmark Algorithm
+ * Traversal and Print Function
+ * Implements the Dijkstra function
+ */ 
+
+vector<string> Graph::Landmark(string start, string connection, string end){
+    
+    //Running Dijkstra's to get shortest path from start to end through connecting airport
+    vector<string> connect1 = Dijkstra(start, connection);
+    vector<string> connect2 = Dijkstra(connection,end);
+
+    //Removing any redundancy
+    connect2.erase(connect2.begin());
+
+    //Joining to get total shortest path
+    for(auto v : connect2){
+        connect1.push_back(v);
+    }
+
+    return connect1;
+}
+
+void Graph::printLandmark(string start, string connection, string end){
+    
+    vector<string> route = Landmark(start, connection, end); 
+
+    if(route.back() != end){
+        cout<<"Your destination cannot be visited starting from the given point or through the given connection"<<endl;
+        return;
+    }
+
+    cout << "From the Landmark Path Algorithm, the shortest path you can take from your starting airport to your destination is :" << endl;
+    for (auto & airport: route) {
+        if (airport == route.back()){
+        cout << airport;
+        break;
+        }
+        cout << airport << "->";
+    }
+    cout << endl;
+}

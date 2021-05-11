@@ -44,8 +44,8 @@ Write_file.o: main.cpp Write_file.cpp
 graph.0: main.cpp graph.cpp
 	$(CXX) $(CXXFLAGS) main.cpp graph.cpp
 
-test: catch/catchmain.cpp tests/tests.cpp Read_file.cpp
-	$(LD) catch/catchmain.cpp tests/tests.cpp Read_file.cpp $(LDFLAGS) -o test
+test: catch/catchmain.cpp tests/tests.cpp Read_file.cpp Write_file.cpp graph.cpp
+	$(LD) catch/catchmain.cpp tests/tests.cpp Read_file.cpp Write_file.cpp graph.cpp $(LDFLAGS) -o test
 
 clean:
 	-rm -f *.o $(EXENAME) test
