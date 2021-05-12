@@ -1,5 +1,3 @@
-A two-page proposal which includes: (1) the dataset you are using, with details including source location, format, and how it will be processed. (2) the specific algorithms you have chosen to implement, including their input and output, (3) what final deliverable you will complete to prove your methods have worked and (4) a timeline to accomplish these goals.
-
 We have changed some of our goals from when the project proposal was due. 
 
 Leading Question
