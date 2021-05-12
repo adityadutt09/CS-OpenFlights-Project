@@ -1,5 +1,5 @@
 # asdutt2 - deeyab2 - rmorus2
-Final Project
+Final Project.
 Our project runs on two datasets, the airports dataset as well as the routes dataset.
 There is nothing to be done in order to build the graph and its members. 
 
