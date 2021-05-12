@@ -1,4 +1,4 @@
-EXENAME = finalproj
+EXENAME = final
 OBJS = Read_file.o main.o Write_file.o graph.o
 
 

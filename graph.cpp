@@ -139,7 +139,7 @@ void Graph::printBFS(string start, string end){
             break;
         }
 
-        cout<<path<<" - > ";
+        cout<<path<<" -> ";
     }    
     cout<<endl;
 }
