@@ -14,4 +14,4 @@ Week 5:
 Created the interface and implementation for the graph data structure used to store the airports, city names, latitudes, longitudes as nodes and the distance between two airports/cities as the weights of the edges. Also created the BFS traversal algorithm for traversing the graph as well as a function to read in the dataset and construct the graph.
 
 Week 6:
-
+Finalized both Dijkstra's and Landmark algorithms to traverse the graphs. Finalized our test cases for one individual test for each of the three algorithms. Ensured that the program was runnable on EWS and wrote out how to run the project in our README document. Finalized and recorded our final presentation video as well as our RESULTS document to finish the project. 
